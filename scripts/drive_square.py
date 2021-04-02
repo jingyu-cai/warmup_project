@@ -32,7 +32,6 @@ class DriveSquare(object):
             self.velocity_pub.publish(turn_velocity)
             rospy.sleep(5)
 
-# main method
 if __name__ == '__main__':
     node = DriveSquare()
     node.run()
