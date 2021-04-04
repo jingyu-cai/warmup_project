@@ -5,31 +5,39 @@ from geometry_msgs.msg import Twist, Vector3
 from math import radians
 
 class DriveSquare(object):
-    """ This node publishes the robot's velocity using timing to make it drive in a square """
+    """ This node publishes the robot's velocity using timing to make it 
+    drive in a square """
 
-    # set up the node and create publisher
     def __init__(self):
+        """ Initial setups for the node """
+
+        # set up node, publisher, and a zeroed Twist() msg
         rospy.init_node('drive_square')
         self.velocity_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-        rospy.sleep(5)
+        self.twist = Twist()
 
-    # run the node
+        # sleep for 1 second to ensure publisher is set up
+        rospy.sleep(1)
+
     def run(self):
-        # define velocity when robot is moving forwards
-        forward_velocity = Twist()
-        forward_velocity.linear.x = 0.1
-        forward_velocity.angular.z = 0.0
+        """ Loop through publishing different linear and 
+        angular velocities to make robot drive in a square """
 
-        # define velocity when robot is turning
-        turn_velocity = Twist()
-        turn_velocity.linear.x = 0.0
-        turn_velocity.angular.z = radians(18)
-
-        # loop publishing forward velocity for 10s, and turn velocity for 5s
         while not rospy.is_shutdown():
-            self.velocity_pub.publish(forward_velocity)
+            # define velocity when robot is moving forwards
+            self.twist.linear.x = 0.1
+            self.twist.angular.z = 0.0
+            self.velocity_pub.publish(self.twist)
+
+            # loop publishing forward velocity for 10s
             rospy.sleep(10)
-            self.velocity_pub.publish(turn_velocity)
+
+            # define velocity when robot is turning
+            self.twist.linear.x = 0.0
+            self.twist.angular.z = radians(18)
+            self.velocity_pub.publish(self.twist)
+
+            # loop publishing turn velocity for 5s
             rospy.sleep(5)
 
 if __name__ == '__main__':
