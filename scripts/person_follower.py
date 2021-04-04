@@ -4,9 +4,10 @@ import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
+import math
 
 # define distance to closest object
-distance = 0.5
+dist = 0.5
 
 class StopAtWall(object):
     """ This node makes the robot follow its closest object 
@@ -21,30 +22,36 @@ class StopAtWall(object):
         self.twist_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
         self.twist = Twist()
 
-    def process_scan(self, data):
+    def find_min(self, data):
         """ WHAT THIS FUNCTION DOES """
 
-        min_dist = min(data)
-        min_dist_i = data.index(min_dist)
-
-        if min_dist_i != 0:
-            self.twist.linear.x = 0.0
-            self.twist.angular.z = radians(min_dist_i)
-            self
-            rospy.sleep(1)
-        
-
-
-        if data.ranges[0] >= distance:
-            # Go forward if not close enough to wall.
-            self.twist.linear.x = 0.1
+        if len(data.ranges) < 1:
+            print("find_min(): data has no elements")
         else:
-            # Close enough to wall, stop.
-            self.twist.linear.x = 0
+            min_element = data.ranges[0]
+            min_index = 0
+            for i in range(len(data.ranges)):
+                if data.ranges[i] < min_element:
+                    min_element = data.ranges[i]
+                    min_index = i
+        return (min_element, min_index)
 
-        # Publish msg to cmd_vel.
+    def process_scan(self, data):
+        """ WHAT THIS FUNCTION DOES """
+        
+        min_data = self.find_min(data)
+
+        angle = lambda theta: theta if theta < 180 else theta - 360
+        turn = lambda theta: 0 if abs(theta) < 10 else theta
+
+        if min_data[0] >= dist:
+            self.twist.linear.x = 0.2
+        else:
+            self.twist.linear.x = 0.0
+
+        self.twist.angular.z = math.radians(turn(angle(min_data[1])))
+
         self.twist_pub.publish(self.twist)
-
 
     def run(self):
         """ run the node """
