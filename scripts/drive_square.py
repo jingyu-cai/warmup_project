@@ -13,7 +13,7 @@ class DriveSquare(object):
 
         # set up node, publisher, and a zeroed Twist msg
         rospy.init_node('drive_square')
-        self.velocity_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.twist = Twist()
 
         # sleep for 1 second to ensure publisher is set up
@@ -27,7 +27,7 @@ class DriveSquare(object):
             # define velocity for robot to move forwards
             self.twist.linear.x = 0.1
             self.twist.angular.z = 0.0
-            self.velocity_pub.publish(self.twist)
+            self.twist_pub.publish(self.twist)
 
             # loop publishing forward velocity for 10s
             rospy.sleep(10)
@@ -35,11 +35,12 @@ class DriveSquare(object):
             # define velocity for robot to turn
             self.twist.linear.x = 0.0
             self.twist.angular.z = radians(18)
-            self.velocity_pub.publish(self.twist)
+            self.twist_pub.publish(self.twist)
 
             # loop publishing turn velocity for 5s
             rospy.sleep(5)
 
 if __name__ == '__main__':
+    # declare a node and run it
     node = DriveSquare()
     node.run()

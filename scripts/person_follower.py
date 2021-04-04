@@ -5,36 +5,35 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 
-# How close we will get to wall.
-distance = 0.4
+# define distance to closest object
+distance = 0.5
 
 class StopAtWall(object):
-    """ This node makes the robot follow its closest object while maintaining a safe distance """
+    """ This node makes the robot follow its closest object 
+    while maintaining a safe distance """
 
     def __init__(self):
-        # start the rospy node
+        """ Initial setups for the node """
+
+        # set up node, subscriber, publisher, and a zeroed Twist msg
         rospy.init_node("person_follower")
-
-        
         rospy.Subscriber("/scan", LaserScan, self.process_scan)
-        self.velocity_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
-
-        # Create a default twist msg (all values 0).
-        lin = Vector3()
-        ang = Vector3()
-        self.twist = Twist(linear=lin,angular=ang)
+        self.twist_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
+        self.twist = Twist()
 
     def process_scan(self, data):
-        # Determine closeness to wall by looking at scan data from in front of
-        #   the robot, set linear velocity based on that information, and
-        #   publish to cmd_vel.
+        """ WHAT THIS FUNCTION DOES """
 
-        # The ranges field is a list of 360 number where each number
-        #   corresponds to the distance to the closest obstacle from the
-        #   LiDAR at various angles. Each measurement is 1 degree apart.
+        min_dist = min(data)
+        min_dist_i = data.index(min_dist)
 
-        # The first entry in the ranges list corresponds with what's directly
-        #   in front of the robot.
+        if min_dist_i != 0:
+            self.twist.linear.x = 0.0
+            self.twist.angular.z = radians(min_dist_i)
+            self
+            rospy.sleep(1)
+        
+
 
         if data.ranges[0] >= distance:
             # Go forward if not close enough to wall.
@@ -48,10 +47,12 @@ class StopAtWall(object):
 
 
     def run(self):
-        # Keep the program alive.
+        """ run the node """
+
+        # keep the program alive
         rospy.spin()
 
 if __name__ == '__main__':
-    # Declare a node and run it.
+    # declare a node and run it
     node = StopAtWall()
     node.run()
