@@ -23,38 +23,51 @@ class StopAtWall(object):
         self.twist = Twist()
 
     def find_min(self, data):
-        """ WHAT THIS FUNCTION DOES """
+        """ Find the minimum element and its index in the ranges tuple,
+        which correspond to the distance to the nearest object from the
+        robot and the angle it points to """
 
-        if len(data.ranges) < 1:
+        data_len = len(data.ranges)
+
+        if data_len < 1:
+            # handle case when data has no elements
             print("find_min(): data has no elements")
         else:
+            # find the minimum element and its index
             min_element = data.ranges[0]
             min_index = 0
-            for i in range(len(data.ranges)):
+            for i in range(data_len):
                 if data.ranges[i] < min_element:
                     min_element = data.ranges[i]
                     min_index = i
         return (min_element, min_index)
 
     def process_scan(self, data):
-        """ WHAT THIS FUNCTION DOES """
+        """ Take in the scan data and determine how much the robot
+        should move and turn to follow the object at a same distance """
         
+        # get the minimum distance and its angle for each scan
         min_data = self.find_min(data)
 
+        # lambda function to determine forward velocity based on distance
+        #   away from the object
+        linear_vel = lambda x: 0.2 if min_data[0] >= dist else 0
+
+        # lambda function to prevent > 180 degree turns, robot will only make
+        #   < 180 degree left and right turns
         angle = lambda theta: theta if theta < 180 else theta - 360
+
+        # lambda function to prevent the "over-jiggliness" of the robot
+        #   when it stops in front of the object
         turn = lambda theta: 0 if abs(theta) < 10 else theta
 
-        if min_data[0] >= dist:
-            self.twist.linear.x = 0.2
-        else:
-            self.twist.linear.x = 0.0
-
+        # set linear and angular velocities and publish Twist msg
+        self.twist.linear.x = linear_vel(min_data[0])
         self.twist.angular.z = math.radians(turn(angle(min_data[1])))
-
         self.twist_pub.publish(self.twist)
 
     def run(self):
-        """ run the node """
+        """ Run the node """
 
         # keep the program alive
         rospy.spin()
