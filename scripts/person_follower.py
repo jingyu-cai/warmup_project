@@ -44,7 +44,7 @@ class StopAtWall(object):
 
     def process_scan(self, data):
         """ Take in the scan data and determine how much the robot
-        should move and turn to follow the object at a safed distance """
+        should move and turn to follow the object at a safe distance """
         
         # get the minimum distance and its angle for each scan
         min_data = self.find_min(data)
