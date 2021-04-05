@@ -29,7 +29,7 @@ class DriveSquare(object):
             self.twist.angular.z = 0.0
             self.twist_pub.publish(self.twist)
 
-            # loop publishing forward velocity for 10s
+            # publish forward velocity for 10s
             rospy.sleep(10)
 
             # define velocity for robot to turn
@@ -37,7 +37,7 @@ class DriveSquare(object):
             self.twist.angular.z = radians(18)
             self.twist_pub.publish(self.twist)
 
-            # loop publishing turn velocity for 5s
+            # publish turn velocity for 5s
             rospy.sleep(5)
 
 if __name__ == '__main__':
