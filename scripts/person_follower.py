@@ -9,7 +9,7 @@ import math
 # define distance to closest object
 dist = 0.5
 
-class StopAtWall(object):
+class PersonFollower(object):
     """ This node makes the robot follow its closest object 
     while maintaining a safe distance """
 
@@ -81,5 +81,5 @@ class StopAtWall(object):
 
 if __name__ == '__main__':
     # declare a node and run it
-    node = StopAtWall()
+    node = PersonFollower()
     node.run()
