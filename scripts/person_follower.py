@@ -42,36 +42,53 @@ class PersonFollower(object):
                     min_index = i
         return (min_element, min_index)
 
+    def linear_vel(self, x):
+        """ Determine the forward velocity based on distance away
+        from the object """
+
+        if x >= dist:
+            # keep going if robot is far away from the object
+            return 0.2
+        else:
+            # stop if robot reaches next to the object
+            return 0
+
+    def angular_vel(self, theta):
+        """Determine the angular velocity based on angle to the object """
+
+        if abs(theta) < 10:
+            # limit angular velocity with a buffer to prevent the 
+            #   "over-jiggliness" of the robot when it stops in front 
+            #   of the object
+            return 0
+        else:
+            # prevent > 180 degree turns, robot will only make <= 180 
+            #   degree turns to face the object
+            if theta < 180:
+                return theta
+            else:
+                return theta - 360
+
     def process_scan(self, data):
         """ Take in the scan data and determine how much the robot
         should move and turn to follow the object at a safe distance """
         
         # get the minimum distance and its angle for each scan
         min_data = self.find_min(data)
+        min_dist = min_data[0]
+        min_ang = min_data[1]
 
-        if min_data[0] == math.inf:
+        if min_dist == math.inf:
             # handle case when no objects are presented
             self.twist.linear.x = 0
             self.twist.angular.z = 0
-            self.twist_pub.publish(self.twist)
         else:
-            # lambda function to determine forward velocity based on distance
-            #   away from the object
-            linear_vel = lambda x: 0.2 if min_data[0] >= dist else 0
+            # set linear and angular velocities
+            self.twist.linear.x = self.linear_vel(min_dist)
+            self.twist.angular.z = math.radians(self.angular_vel(min_ang))
 
-            # lambda function to prevent > 180 degree turns, robot will only 
-            #   make <= 180 degree turns
-            limit_angle = lambda theta: theta if theta < 180 else theta - 360
-
-            # lambda function to determine turn velocity with a buffer to 
-            #   prevent the "over-jiggliness" of the robot when it stops in 
-            #   front of the object
-            turn_vel = lambda theta: 0 if abs(theta) < 10 else theta
-
-            # set linear and angular velocities and publish Twist msg
-            self.twist.linear.x = linear_vel(min_data[0])
-            self.twist.angular.z = math.radians(turn_vel(limit_angle(min_data[1])))
-            self.twist_pub.publish(self.twist)
+        # publish Twist msg
+        self.twist_pub.publish(self.twist)
 
     def run(self):
         """ Run the node """
