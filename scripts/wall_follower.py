@@ -40,7 +40,7 @@ class WallFollower(object):
         """ WHAT THIS FUNCTION DOES """
 
         for x in data.ranges:
-            if x < dist:
+            if x < 1.2:
                 return False
         
         return True
@@ -59,7 +59,15 @@ class WallFollower(object):
             if front_dist < dist:
                 return kp_ang * (dist - front_dist)
             else:
-                return (back_right_dist - front_right_dist) + (dist - right_dist) 
+                balance_ang = back_right_dist - front_right_dist
+                dist_ang = dist - right_dist
+                
+                if balance_ang == math.inf:
+                    return front_right_dist
+                elif balance_ang == -1 * math.inf:
+                    return back_right_dist
+                else:
+                    return balance_ang + dist_ang
 
     def process_scan(self, data):
         """ WHAT THIS FUNCTION DOES """
