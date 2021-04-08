@@ -19,6 +19,13 @@ The problem is to make the robot follow its closest object while maintaining a s
 ### A gif
 ![person_follower_demo.gif](gifs/person_follower_demo.gif)
 
+### Wall Follower
+### A high-level description
+The problem is to make the robot navigate towards a wall in a square room, drive alongside the walls at an approximately fixed distance, and turn at corners. For me, I used proportional control to take in the sensory information of the walls around the robot and use that to drive its motors, including processing the distances and angles from the robot to the walls to balance its linear and angular velocities to demonstrate the desired behaviors.
+### Code explanation
+###A gif
+![wall_follower_demo.gif](gifs/wall_follower_demo.gif)
+
 ## Challenges
 For the **Driving in a Square** behavior, my biggest challenge was understanding how to use `angular.z` to turn the robot 90 degrees. For that, I read on documentations of `angular.z` and found its units to be rad/sec, so I was able to set a timer to leave the robot turning at a specific angular velocity for a specific amount of time to make it turn 90 degrees with simple math. For the **Person Follower** behavior, my biggest challenge was understanding the attributes of the `/scan` rostopic. Initially, I thought that `range_min` denotes the closest distance from the object to the robot, but instead it means the minimum range value the sensor can detect. After I understood what the attributes meant, I was able to correct my error and solve the problem.
 
