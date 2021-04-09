@@ -20,7 +20,7 @@ The problem is to make the robot follow its closest object while maintaining a s
 ### A gif
 ![person_follower_demo.gif](gifs/person_follower_demo.gif)
 
-### Wall Follower
+## Wall Follower
 ### A high-level description
 The problem is to make the robot navigate towards a wall in a square room, drive alongside the walls at an approximately fixed distance, and turn at corners. For me, I used proportional control to take in the sensory information of the walls around the robot and use that to drive its motors, including processing the distances and angles from the robot to the walls to balance its linear and angular velocities to demonstrate the desired behaviors.
 ### Code explanation
@@ -30,7 +30,7 @@ The problem is to make the robot navigate towards a wall in a square room, drive
 * `angular_vel()`: This sets the angular velocity of the robot with proportional control by using its distances to the walls around it at various angles to serve as error signals based on different conditions. In all cases, a reasonable kp is 1, so it is not explicitly defined. If the robot is `far_from_wall()`, then its angular velocity will be 0 so it will go straight forward until it is nearer to a wall. Otherwise, two error signals are defined, one is `balance_ang`, which balances the robot to move in a straight line and turn at corners, and another is `dist_ang`, which keeps the robot at a distance from the walls. If `balance_ang` is `math.inf`, then it means that the robot detected something on its front right but not its back right, so it will turn counterclockwise until it detects the wall at both angles. Similarly, if `balance_ang` is `-math.inf`, then it means that the robot detected something on its back right but not its front right, so it will turn clockwise until it detects the wall at both angles. Lastly, when the robot can detect the wall at both angles, it will use both `balance_ang` and `dist_ang` to drive alongside the walls and turn at corners.
 * `process_scan()`: This function takes in the `/scan` data, and sets the linear and angular velocities of the robot based on the `linear_vel()` and `angular_vel()` functions, and publishes the Twist message to the `/cmd_vel` rostopic.
 * `run()`: This will keep a ROS node listening for ROS messages until you shut it down.
-###A gif
+### A gif
 ![wall_follower_demo.gif](gifs/wall_follower_demo.gif)
 
 ## Challenges
