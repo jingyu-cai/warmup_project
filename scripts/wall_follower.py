@@ -8,9 +8,8 @@ import math
 # define distance to wall
 dist = 0.8
 
-# define kp for linear and angular velocities
+# define kp for linear velocity
 kp_lin = 0.2
-kp_ang = 10
 
 class WallFollower(object):
     """ This node makes the robot drive alongside the walls of a square
@@ -85,16 +84,18 @@ class WallFollower(object):
             if balance_ang == math.inf:
                 # handle the case when robot cannot detect anything on its
                 #   back right but can detect the wall on its front right,
-                #   it will turn until robot detects the wall at both angles
+                #   it will turn counterclockwise until it detects the wall 
+                #   at both angles
                 return front_right_dist
             elif balance_ang == -1 * math.inf:
                 # handle the case when robot cannot detect anything on its
                 #   front right but can detect the wall on its back right,
-                #   it will turn until robot detects the wall at both angles
-                return back_right_dist
+                #   it will turn clockwise until it detects the wall at 
+                #   both angles
+                return -1 * back_right_dist
             else:
                 # when the robot detects the wall at both angles, it will use
-                #   both error signals to drive alongside the wall and turn
+                #   both error signals to drive alongside the walls and turn
                 #   at corners
                 return balance_ang + dist_ang
 
