@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist
 import math
 
 # define distance to wall
-dist = 0.8
+dist = 1.0
 
 # define kp for linear velocity
 kp_lin = 0.2
