@@ -100,7 +100,7 @@ class WallFollower(object):
                 return balance_ang + dist_ang
 
     def process_scan(self, data):
-        """ WHAT THIS FUNCTION DOES """
+        """ Takes in scan data and sets linear and angular velocities """
 
         # set linear and angular velocities, and publish Twist msg
         self.twist.linear.x = self.linear_vel(data)
