@@ -22,7 +22,7 @@ The problem is to make the robot follow its closest object while maintaining a s
 
 ## Wall Follower
 ### A high-level description
-The problem is to make the robot navigate towards a wall in a square room, drive alongside the walls at an approximately fixed distance, and turn at corners. For me, I used proportional control to take in the sensory information of the walls around the robot and use that to drive its motors, including processing the distances and angles from the robot to the walls to balance its linear and angular velocities to demonstrate the desired behaviors.
+The problem is to make the robot navigate towards a wall in a square room, drive counterclockwise alongside the walls at an approximately fixed distance, and turn at corners. For me, I used proportional control to take in the sensory information of the walls around the robot and use that to drive its motors, including processing the distances and angles from the robot to the walls to balance its linear and angular velocities to demonstrate the desired behaviors.
 ### Code explanation
 * `__init___`: I initialized a node, a subscriber to the `/scan` rostopic and a publisher to the `/cmd_vel` rostopic, as well as defined a zeroed Twist message to be modified later.
 * `linear_vel()`: This sets the linear velocity of the robot with proportional control by using its distance to the wall directly in front of it as the error signal multipled by a defined `kp_lin`. So, if the robot is far away from the wall ahead of it, then it will have a high linear velocity, and vice versa. After some experimenting, I also limited the maximum velocity to be 0.3 since the linear velocity immediately after turning is high, which may cause the robot to drift and spin in circles.

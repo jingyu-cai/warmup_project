@@ -12,8 +12,8 @@ dist = 1.0
 kp_lin = 0.2
 
 class WallFollower(object):
-    """ This node makes the robot drive alongside the walls of a square
-    room indefinitely """
+    """ This node makes the robot drive counterclockwise alongside the 
+    walls of a square room indefinitely """
 
     def __init__(self):
         """ Initial setups for the node """
